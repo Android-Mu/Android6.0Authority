@@ -11,6 +11,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.code.android60authority.util.MPermissionUtils;
+
+/**
+ * Description：Android6.0动态申请权限
+ * <p>
+ * Created by code小生 on 2016/12/30.
+ */
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btn1;
@@ -34,7 +42,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = view.getId();
         switch (id) {
             case R.id.btn1:
-                checkperm();
+//                checkperm();
+                MPermissionUtils.requestPermissionsResult(this, 1, new String[]{Manifest.permission.WRITE_CALENDAR}
+                        , new MPermissionUtils.OnPermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+                                Toast.makeText(MainActivity.this, "权限,apply sucess", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onPermissionDenied() {
+                                MPermissionUtils.showTipsDialog(MainActivity.this);
+                            }
+                        });
                 break;
         }
     }
@@ -66,20 +86,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 申请权限回调
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1001: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(MainActivity.this, "权限,apply sucess", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "权限,apply fail", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-        }
+//        switch (requestCode) {
+//            case 1001: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+//                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(MainActivity.this, "权限,apply sucess", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(MainActivity.this, "权限,apply fail", Toast.LENGTH_SHORT).show();
+//                }
+//                return;
+//            }
+//        }
+        MPermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
